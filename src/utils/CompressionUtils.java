@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**Practice 6 Compression Utils*/
 public class CompressionUtils {
 
     /**Front-end packing for dictionary compression*/
