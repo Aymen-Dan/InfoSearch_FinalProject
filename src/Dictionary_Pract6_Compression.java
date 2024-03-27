@@ -20,6 +20,7 @@ public class Dictionary_Pract6_Compression {
     private final ArrayList<Double> fileSizes;
     private final ArrayList<String> fileNames;
 
+    private final String vocabPathTXT;
 
     /**Constructor
      * @param folder path to folder with documents
@@ -62,12 +63,13 @@ public class Dictionary_Pract6_Compression {
             }
         }
 
-        // Save the vocabulary to a file
+        // Save the dictionary to a file
         saveDictionaryToFile();
         vocabSize = new File("src/results/dictionary.txt").length() / 1024.0;
+        vocabPathTXT = new File("dictionary.txt").getAbsolutePath();
 
-        // Compress the vocabulary using front-end packing
-        String[] compressedVocabulary = compressDictionary(this.vocab);
+        // Compress the dictionary using front-end packing
+        String[] compressedDictionary = compressDictionary(this.vocab);
     }
 
 
@@ -97,7 +99,7 @@ public class Dictionary_Pract6_Compression {
     }
 
     /**Make room for a word in an array
-     * @param idx index of a word in the vocabulary*/
+     * @param idx index of a word in the dictionary*/
     private void shift(int idx) {
         if (num >= length() - 1) {
             String[] res = new String[length() * 2];
@@ -122,7 +124,7 @@ public class Dictionary_Pract6_Compression {
     }
 
 
-    /**Helper method to add words to the vocabulary
+    /**Helper method to add words to the dictionary
      * @param word a given word (from file line)*/
     private void addWord(String word) {
         int idx = getIndex(word);
@@ -151,12 +153,59 @@ public class Dictionary_Pract6_Compression {
         return res;
     }
 
+    //SERIALIZATION METHODS
+
+    /**Serialize the dictionary object to a file*/
+    public void serialize(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            // System.out.println("Dictionary serialized successfully!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**Deserialize the dictionary object from a file
+     * @param  filename name of file to serialize*/
+    public static Dictionary deserialize(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            Object obj = ois.readObject();
+            if (obj instanceof Dictionary) {
+                // System.out.println("Dictionary deserialized successfully!");
+                return (Dictionary) obj;
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 
     //ALL THE TECHNICAL METHODS
     /**Return statistics*/
     public String statsTXT() {
 
-        return "Stats for vocabulary.txt: " + "\nNumber of words in vocabulary: " + num + "\nVocabulary size: " + vocabSize + " kb";
+        return "Stats for dictionary.txt: " + "\nNumber of words in dictionary: " + num + "\ndictionary size: " + vocabSize + " kb \n" + listOfFiles();
+    }
+
+    public String statsSer() {
+
+        File serFile = new File("dictionary.ser");
+
+        if (!serFile.exists()) {
+            return "\nThe file dictionary.ser does not exist.";
+        }
+
+        StringBuilder s = new StringBuilder("\nStats for vocab.ser: ");
+        double fileSize = serFile.length() / 1024.0; // Size in kilobytes
+        s.append("\nSize of serialized dictionary.ser file: ").append(fileSize).append(" kb");
+        Dictionary deserializedDictionary = Dictionary.deserialize("dictionary.ser");
+        assert deserializedDictionary != null;
+        s.append("\nNumber of words in the deserialized dictionary: ").append(deserializedDictionary.number());
+        s.append("\nDictionary size of the deserialized dictionary: ").append(deserializedDictionary.vocabSize).append(" kb\n");
+
+        return s.toString();
     }
 
     /**List files in collection*/
@@ -174,8 +223,12 @@ public class Dictionary_Pract6_Compression {
         return s.toString();
     }
 
+    /**Return the path to the dictionary.txt file on disc*/
+    public String getDictionaryFilePath() {
+        return vocabPathTXT;
+    }
 
-    /**Print vocabulary in readable format*/
+    /**Print dictionary in readable format*/
     public void print() {
         OutputStream out = new BufferedOutputStream(System.out);
         for (int i = 0; i < num; i++) {
