@@ -17,7 +17,9 @@ public class Dictionary implements Serializable {
     private final String vocabPathTXT;
 
 
-    //constructor
+    /**Constructor
+     * @param folder path to folder with documents
+     * */
     public Dictionary(String folder){
         File dir = new File(folder);
         File[] files = dir.listFiles();
@@ -58,14 +60,14 @@ public class Dictionary implements Serializable {
         }
 
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("vocabulary.txt"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter("dictionary.txt"));
             bw.write(toString());
             bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        vocabSize = new File("vocabulary.txt").length()/1024.0;
-        vocabPathTXT = new File("vocabulary.txt").getAbsolutePath();
+        vocabSize = new File("dictionary.txt").length()/1024.0;
+        vocabPathTXT = new File("dictionary.txt").getAbsolutePath();
     }
 
     //checks words in a line and adds them to an array
@@ -142,7 +144,7 @@ public class Dictionary implements Serializable {
     //returns statistics
     public String statsTXT(){
 
-        return "Stats for vocabulary.txt: " + "\nNumber of words in vocabulary: " + num +
+        return "Stats for dictionary.txt: " + "\nNumber of words in dictionary: " + num +
                 "\nDictionary size: " + vocabSize + " kb";
     }
 
@@ -162,19 +164,19 @@ public class Dictionary implements Serializable {
 
     public String statsSer() {
 
-        File serFile = new File("vocabulary.ser");
+        File serFile = new File("dictionary.ser");
 
         if (!serFile.exists()) {
-            return "\nThe file vocabulary.ser does not exist.";
+            return "\nThe file dictionary.ser does not exist.";
         }
 
         StringBuilder s = new StringBuilder("\nStats for vocab.ser: ");
         double fileSize = serFile.length() / 1024.0; // Size in kilobytes
-        s.append("\nSize of serialized vocabulary.ser file: ").append(fileSize).append(" kb");
-        Dictionary deserializedDictionary = Dictionary.deserialize("vocabulary.ser");
+        s.append("\nSize of serialized dictionary.ser file: ").append(fileSize).append(" kb");
+        Dictionary deserializedDictionary = Dictionary.deserialize("dictionary.ser");
         assert deserializedDictionary != null;
-        s.append("\nNumber of words in the deserialized vocabulary: ").append(deserializedDictionary.number());
-        s.append("\nDictionary size of the deserialized vocabulary: ").append(deserializedDictionary.vocabSize).append(" kb\n");
+        s.append("\nNumber of words in the deserialized dictionary: ").append(deserializedDictionary.number());
+        s.append("\nDictionary size of the deserialized dictionary: ").append(deserializedDictionary.vocabSize).append(" kb\n");
 
         return s.toString();
     }
@@ -198,15 +200,15 @@ public class Dictionary implements Serializable {
     }
 
 
-    //returns the path to the vocabulary.txt file on disc
-    public String getVocabularyFilePath() {
+    //returns the path to the dictionary.txt file on disc
+    public String getDictionaryFilePath() {
         return vocabPathTXT;
     }
 
     //returns path to .ser TODO: MAKE A METHOD THAT DOES EVERY TYPE OF FILE W/O NAME
     public String getFilePath() {
 
-        return new File ("vocabulary.ser").getAbsolutePath();
+        return new File ("dictionary.ser").getAbsolutePath();
     }
 
 
@@ -222,7 +224,7 @@ public class Dictionary implements Serializable {
 
     //SERIALIZATION METHODS
 
-    // Serialize the vocabulary object to a file
+    // Serialize the dictionary object to a file
     public void serialize(String filename) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(this);
@@ -232,7 +234,7 @@ public class Dictionary implements Serializable {
         }
     }
 
-    // Deserialize the vocabulary object from a file
+    // Deserialize the dictionary object from a file
     public static Dictionary deserialize(String filename) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
             Object obj = ois.readObject();
