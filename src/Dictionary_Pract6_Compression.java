@@ -1,8 +1,6 @@
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static utils.CompressionUtils.compressDictionary;
 
@@ -10,7 +8,7 @@ import static utils.CompressionUtils.compressDictionary;
 
 /**TODO: write better comments for methods*/
 
-/**TODO: COMPARE TO DICTIONARY 1 AND MAY THE BESTSURVIVE*/
+/**TODO: COMPARE TO DICTIONARY 1 AND MAY THE BEST SURVIVE*/
 
 /**Practice 6 Dictionary*/
 public class Dictionary_Pract6_Compression {
@@ -23,7 +21,9 @@ public class Dictionary_Pract6_Compression {
     private final ArrayList<String> fileNames;
 
 
-    //constructor
+    /**Constructor
+     * @param folder path to folder with documents
+     * */
     public Dictionary_Pract6_Compression(String folder) {
         File dir = new File(folder);
         File[] files = dir.listFiles();
@@ -83,7 +83,8 @@ public class Dictionary_Pract6_Compression {
         return vocab;
     }
 
-    //checks words in a line and adds them to an array
+    /**Gets words from a line and adds them to an array
+     * @param line line of text file*/
     private void addWords(String line) {
         if (line.equals("")) return;
         String[] temp = line.split("[\\W]+");
@@ -95,7 +96,8 @@ public class Dictionary_Pract6_Compression {
         }
     }
 
-    //make room for a word in an array
+    /**Make room for a word in an array
+     * @param idx index of a word in the vocabulary*/
     private void shift(int idx) {
         if (num >= length() - 1) {
             String[] res = new String[length() * 2];
@@ -114,13 +116,16 @@ public class Dictionary_Pract6_Compression {
 
     }
 
-    private int index(String word) {
+    /**Word index getter*/
+    private int getIndex(String word) {
         return binarySearch(0, num - 1, word);
     }
 
-    //adds words to the vocab
+
+    /**Helper method to add words to the vocabulary
+     * @param word a given word (from file line)*/
     private void addWord(String word) {
-        int idx = index(word);
+        int idx = getIndex(word);
         if (idx < length() && word.equals(vocab[idx])) return;
         shift(idx);
         vocab[idx] = word;
@@ -128,7 +133,10 @@ public class Dictionary_Pract6_Compression {
     }
 
 
-    //search for a place to put a word in
+    /**Search for a place to put a word in
+     * @param first index of first element in arr segment
+     * @param last index of last element in arr segment
+     * @param word index of current element if arr segment*/
     private int binarySearch(int first, int last, String word) {
         int res;
         if (first > last) res = first;
@@ -145,15 +153,13 @@ public class Dictionary_Pract6_Compression {
 
 
     //ALL THE TECHNICAL METHODS
-
-
-    //returns statistics
+    /**Return statistics*/
     public String statsTXT() {
 
-        return "Stats for vocabulary.txt: " + "\nNumber of words in vocabulary: " + num +
-                "\nVocabulary size: " + vocabSize + " kb";
+        return "Stats for vocabulary.txt: " + "\nNumber of words in vocabulary: " + num + "\nVocabulary size: " + vocabSize + " kb";
     }
 
+    /**List files in collection*/
     public String listOfFiles() {
         StringBuilder s = new StringBuilder("\nList of files: ");
         double size = 0;
@@ -169,7 +175,7 @@ public class Dictionary_Pract6_Compression {
     }
 
 
-    //returns elements of a created vocab
+    /**Print vocabulary in readable format*/
     public void print() {
         OutputStream out = new BufferedOutputStream(System.out);
         for (int i = 0; i < num; i++) {
@@ -186,7 +192,7 @@ public class Dictionary_Pract6_Compression {
         }
     }
 
-    // Save the compressed vocabulary to a file
+    /**Save the compressed dictionaru to a file*/
     private void saveDictionaryToFile() {
         String filePath = "src/results/dictionary.txt";
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
@@ -199,7 +205,8 @@ public class Dictionary_Pract6_Compression {
         }
     }
 
-    // Open a file specified by its path
+    /**Open a file specified by its path
+     * @param filePath path to file to be opened*/
     public static void openFile(String filePath) {
         try {
             System.out.println("\nPulling up the file...");
